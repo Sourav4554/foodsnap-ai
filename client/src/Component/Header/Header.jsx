@@ -11,9 +11,9 @@ const Header = () => {
           backgroundImage: `url(${headerImg})`,
         }}
       >
-        {/* Left Side - Text/Content */}
+        {/*Content */}
 
-        <div className=" flex align-middle flex-col mt-20 ml-10 gap-1.5 md:justify-center">
+        <div className=" flex align-middle flex-col mt-20 ml-10 gap-1.5 md:justify-center md:mt-0">
           <p className="text-2xl sm:text-3xl md:text-4xl font-light">
             Hello Kerala Food Lovers!
           </p>
