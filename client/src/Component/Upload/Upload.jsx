@@ -1,6 +1,26 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Upload } from "lucide-react";
+import * as tmImage from "@teachablemachine/image";
 const Uploads = () => {
+  const modelRef=useRef(null); // Reference to store the model
+  const MODEL_PATH = "my-folder"; // Path to your model files
+
+  useEffect(() => {
+    // Function to load the model
+    const loadModel = async () => {
+      try {
+        const model = await tmImage.load(
+          `${MODEL_PATH}/model.json`,
+          `${MODEL_PATH}/metadata.json`
+        );
+        modelRef.current = model;
+      } catch (error) {
+        console.error("Error loading model:", error);
+      }
+    };
+    loadModel();
+  }, []);
+
   const nutritionData = [
     { nutrient: "Calories", amount: "250 kcal" },
     { nutrient: "Protein", amount: "12 g" },
@@ -19,12 +39,23 @@ const Uploads = () => {
         <span className="drop-shadow-[0px_0px_8px_rgba(0,255,4,1)] text-2xl text-green-400 mb-3">
           Upload here
         </span>
-        <div className="p-8 bg-gray-50 rounded-lg shadow-md">
-          <Upload className="w-20 h-20 text-gray-500" />
-        </div>
+        <label htmlFor="upload-image">
+          <div className="p-8 bg-gray-50 rounded-lg shadow-md relative cursor-pointer">
+            <Upload className="w-20 h-20 text-gray-500 " />
+
+            <input
+              type="file"
+              id="upload-image"
+              accept="image/*"
+              capture="environment"
+              className="w-36 h-36 absolute top-0 left-0"
+              hidden
+            />
+          </div>
+        </label>
         <button
           type="button"
-          className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-3"
+          className="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-3"
         >
           Get Nutritions {"->"}
         </button>
