@@ -1,10 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import * as tmImage from "@teachablemachine/image";
+import { showErrorAlert } from "../../Utilities/popup";
+import Compressor from "compressorjs";
 const Uploads = () => {
-  const modelRef=useRef(null); // Reference to store the model
-  const MODEL_PATH = "my-folder"; // Path to your model files
+  const modelRef = useRef(null); // Reference to store the model
+  const [prediction, setPrediction] = useState(""); // State to store the prediction result
+  const [preview, setPriview] = useState(""); // State to store the image preview
+  const MODEL_PATH = "my-folder"; // Path to your model files\
 
+  // Load the model when the component mounts
   useEffect(() => {
     // Function to load the model
     const loadModel = async () => {
@@ -20,6 +25,51 @@ const Uploads = () => {
     };
     loadModel();
   }, []);
+
+  // Function to handle image upload and prediction
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if(file.size>2e6) {
+      showErrorAlert("Image size is too large. Please upload a image size less than 2mp.");
+      return;
+    }
+    // Check if the file is an image
+    const compressedFile=await new Promise((resolve,reject)=>{
+    new Compressor(file,{
+    quality:0.6,
+    maxWidth:800,
+    maxHeight:800,
+    mimeType:'image/jpeg',
+    success(result){
+    resolve(result)
+    },
+    error(error){
+    reject(error)
+    }
+    })
+    })
+
+    
+    const url = URL.createObjectURL(compressedFile);
+    setPriview(url);
+    const img = new Image();
+    img.src = url;
+    img.onload = async () => {
+      console.time('Prediction time');
+      const predictions = await modelRef.current.predict(img);
+      
+     console.timeEnd('Prediction time');
+      const best = predictions.reduce((prev, current) => {
+        return prev.probability > current.probability ? prev : current;
+      });
+      if (best.probability < 0.5) {
+        showErrorAlert(`Sorry, I can't recognize this food item.`);
+        return;
+      }
+      setPrediction(best.className);
+    };
+  };
 
   const nutritionData = [
     { nutrient: "Calories", amount: "250 kcal" },
@@ -41,14 +91,22 @@ const Uploads = () => {
         </span>
         <label htmlFor="upload-image">
           <div className="p-8 bg-gray-50 rounded-lg shadow-md relative cursor-pointer">
-            <Upload className="w-20 h-20 text-gray-500 " />
-
+            {!preview ? (
+              <Upload className="w-20 h-20 text-gray-500 " />
+            ) : (
+              <img
+                src={preview}
+                alt="image"
+                className="w-36 h-36  object-cover shadow-neutral-900"
+              />
+            )}
             <input
               type="file"
               id="upload-image"
               accept="image/*"
               capture="environment"
               className="w-36 h-36 absolute top-0 left-0"
+              onChange={handleImageUpload}
               hidden
             />
           </div>
@@ -64,7 +122,8 @@ const Uploads = () => {
       {/* Nutrition Info Table */}
       <div className="w-full md:w-1/2">
         <h3 className="text-xl font-semibold text-center mb-4">
-          🍛 Nutrition Facts for <span className="text-green-600">IDILI</span>
+          🍛 Nutrition Facts for{" "}
+          <span className="text-green-600">{prediction}</span>
           <br />
           <div className="flex items-center space-x-2 border border-gray-300 rounded-md px-3 py-1 w-fit">
             <span className="text-xl font-bold cursor-pointer select-none hover:text-red-500">
