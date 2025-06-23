@@ -3,12 +3,16 @@ import { Upload } from "lucide-react";
 import * as tmImage from "@teachablemachine/image";
 import { showErrorAlert } from "../../Utilities/popup";
 import Compressor from "compressorjs";
+import axios from 'axios'
+import Skelton from "../Skelton/Skelton";
 const Uploads = () => {
+  const BackendUrl=`http://localhost:4000`
   const modelRef = useRef(null); // Reference to store the model
   const [prediction, setPrediction] = useState(""); // State to store the prediction result
   const [preview, setPriview] = useState(""); // State to store the image preview
   const MODEL_PATH = "my-folder"; // Path to your model files\
-
+  const[nutrients,setNutrients]=useState({});
+  const [quality,setQuality]=useState(1)
   // Load the model when the component mounts
   useEffect(() => {
     // Function to load the model
@@ -28,6 +32,7 @@ const Uploads = () => {
 
   // Function to handle image upload and prediction
   const handleImageUpload = async (event) => {
+    setNutrients({})
     const file = event.target.files[0];
     if (!file) return;
     if(file.size>2e6) {
@@ -56,10 +61,7 @@ const Uploads = () => {
     const img = new Image();
     img.src = url;
     img.onload = async () => {
-      console.time('Prediction time');
       const predictions = await modelRef.current.predict(img);
-      
-     console.timeEnd('Prediction time');
       const best = predictions.reduce((prev, current) => {
         return prev.probability > current.probability ? prev : current;
       });
@@ -71,14 +73,27 @@ const Uploads = () => {
     };
   };
 
-  const nutritionData = [
-    { nutrient: "Calories", amount: "250 kcal" },
-    { nutrient: "Protein", amount: "12 g" },
-    { nutrient: "Fat", amount: "10 g" },
-    { nutrient: "Carbs", amount: "35 g" },
-    { nutrient: "Fiber", amount: "8 g" },
-    { nutrient: "Sugar", amount: "5 g" },
-  ];
+   const getNutrients=async()=>{
+  try {
+    if(!prediction){
+    showErrorAlert('please upload a food Image')
+    return;
+    }
+    const {data}=await axios.post(`${BackendUrl}/api/food/nutrients`,{name:prediction.toLocaleLowerCase()})
+    if(data){
+    setNutrients(data.message)
+    }
+    else{
+    showErrorAlert(data.message)
+    }
+  } catch (error) {
+    
+    showErrorAlert(error.response.data.message)
+  }
+  }
+
+
+  
   return (
     <div
       id="upload"
@@ -114,23 +129,36 @@ const Uploads = () => {
         <button
           type="button"
           className="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-3"
+          onClick={()=>getNutrients()}
         >
           Get Nutritions {"->"}
         </button>
       </div>
 
       {/* Nutrition Info Table */}
+      {
+     
+      prediction && Object.entries(nutrients).length?
+     
       <div className="w-full md:w-1/2">
+        
         <h3 className="text-xl font-semibold text-center mb-4">
           🍛 Nutrition Facts for{" "}
-          <span className="text-green-600">{prediction}</span>
+          <span className="text-green-600">{Object.entries(nutrients).length&&prediction}</span>
           <br />
           <div className="flex items-center space-x-2 border border-gray-300 rounded-md px-3 py-1 w-fit">
-            <span className="text-xl font-bold cursor-pointer select-none hover:text-red-500">
+            <span className="text-xl font-bold cursor-pointer select-none hover:text-red-500"
+            onClick={()=>{
+              if(100*quality>100){
+            setQuality(quality-1)}}
+              }
+            >
               -
             </span>
-            <span className="text-sm font-medium text-gray-700">100g</span>
-            <span className="text-xl font-bold cursor-pointer select-none hover:text-green-500">
+            <span className="text-sm font-medium text-gray-700">{`${100*quality} g`}</span>
+            <span className="text-xl font-bold cursor-pointer select-none hover:text-green-500"
+            onClick={()=> setQuality(quality+1)}
+            >
               +
             </span>
           </div>
@@ -143,57 +171,25 @@ const Uploads = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {nutritionData.map((item, index) => (
+            {
+           Object.entries(nutrients).map(([key,value],index)=>(
+
               <tr
-                key={index}
-                className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+               key={index}
+               className={`${index%2==0?'bg-gray-50':"bg-gray-100"}`}
               >
-                <td className="px-6 py-3">{item.nutrient}</td>
-                <td className="px-6 py-3">{item.amount}</td>
+                <td className="px-6 py-3">{key}</td>
+                <td className="px-6 py-3">{(value*quality)}{`${key==='calories'?' kcl':` g`}`}</td>
               </tr>
+              
             ))}
           </tbody>
         </table>
       </div>
-
-      {/* <div role="status" class="w-80  p-4 space-y-4 border border-gray-200 divide-y divide-gray-200 rounded-sm shadow-sm animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700">
-    <div class="flex items-center justify-between">
-        <div>
-            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div class="flex items-center justify-between pt-4">
-        <div>
-            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div class="flex items-center justify-between pt-4">
-        <div>
-            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div class="flex items-center justify-between pt-4">
-        <div>
-            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <div class="flex items-center justify-between pt-4">
-        <div>
-            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-        </div>
-        <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-    </div>
-    <span class="sr-only">Loading...</span>
-</div> */}
+      :<Skelton/>
+           
+     
+}
     </div>
   );
 };

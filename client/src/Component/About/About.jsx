@@ -1,10 +1,11 @@
 import React from "react";
-import aboutImg from "../../assets/about.avif"; // Importing the about imageclient
+import aboutImg from "../../assets/about.webp"; // Importing the about imageclient
 const About = () => {
   return (
     <div id="about" className="flex w-full md:h-96 mt-5 lg:h-auto ">
       <div className="w-1/2 hidden md:block">
         <img
+         loading="lazy"
           src={aboutImg}
           alt="About Us"
           className="object-cover h-full w-full "

@@ -1,17 +1,30 @@
-import React from 'react'
-import Navbar from './Component/Navbar/Navbar'
-import Home from './Pages/Home/Home'
-import Footer from './Component/Footer/Footer'
-
-
+import React, { Suspense } from "react";
+import Loader from "./Component/Loader/Loader";
+const Home = React.lazy(() => import(`./Pages/Home/Home`));
+const Navbar = React.lazy(() => import("./Component/Navbar/Navbar"));
+const Footer = React.lazy(() => import("./Component/Footer/Footer"));
 const App = () => {
   return (
     <div>
-      <Navbar/>
-      <Home/>
-      <Footer/>
+       <div>
+      
+      <Suspense fallback={<Loader />}>
+      
+        <Suspense fallback={null}>
+          <Navbar />
+        </Suspense>
+        
+        <Suspense fallback={<Loader />}>
+          <Home />
+        </Suspense>
+        
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      </Suspense>
     </div>
-  )
-}
+    </div>
+  );
+};
 
-export default App
+export default App;

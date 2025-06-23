@@ -1,5 +1,5 @@
 import React from "react";
-import headerImg from "../../assets/home.jpeg"; // Importing the header image
+import headerImg from "../../assets/home.webp"; // Importing the header image
 const Header = () => {
   return (
     <>
