@@ -7,7 +7,7 @@ export const getNutrients=async(req,res)=>{
  return res.status(400).json({success:false,message:'upload a food image'})
  }
 try {
- const nutrients=await foodModel.findOne({name:new RegExp(`${name.trim()}`,'i')})
+ const nutrients=await foodModel.findOne({name:new RegExp(`${name.trim()}`,'i')},{ calories: 1, fat: 1, sugar: 1, protein: 1, fiber: 1,carbs:1, _id: 0 })
  if(!nutrients){
 return res.status(400).json({success:false,message:'this food is not in our collection try other food'})
 }

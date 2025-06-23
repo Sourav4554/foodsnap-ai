@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import compression from 'compression'
 import { connectDatabase } from './config/dbconfig.js'
 import 'dotenv/config'
 import foodRouter from './routes/foodRoute.js'
@@ -7,6 +8,7 @@ const app=express()
 const PORT=process.env.PORT || 4000
 app.use(express.json())
 app.use(cors())
+app.use(compression())
 connectDatabase()
 
 app.use('/api/food',foodRouter)

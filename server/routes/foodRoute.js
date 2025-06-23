@@ -3,6 +3,6 @@ import { getNutrients } from '../controller/foodController.js';
 
 const foodRouter=express.Router();
 
-foodRouter.get('/nutrients',getNutrients)
+foodRouter.post('/nutrients',getNutrients)
 
 export default foodRouter
