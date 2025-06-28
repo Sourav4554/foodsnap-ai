@@ -6,7 +6,7 @@ import Compressor from "compressorjs";
 import axios from 'axios'
 import Skelton from "../Skelton/Skelton";
 const Uploads = () => {
-  const BackendUrl=`http://localhost:4000`
+  const BackendUrl=`https://foodsnap-ai-backend.onrender.com`
   const modelRef = useRef(null); // Reference to store the model
   const [prediction, setPrediction] = useState(""); // State to store the prediction result
   const [preview, setPriview] = useState(""); // State to store the image preview
