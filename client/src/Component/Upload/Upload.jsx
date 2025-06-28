@@ -60,7 +60,12 @@ const Uploads = () => {
     setPriview(url);
     const img = new Image();
     img.src = url;
+    
     img.onload = async () => {
+        if (!modelRef.current) {
+                showErrorAlert("Model is still loading. Please wait a moment and try again.");
+                return;
+        }
       const predictions = await modelRef.current.predict(img);
       const best = predictions.reduce((prev, current) => {
         return prev.probability > current.probability ? prev : current;
