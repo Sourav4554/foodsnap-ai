@@ -87,8 +87,9 @@ const Uploads = () => {
     showErrorAlert(data.message)
     }
   } catch (error) {
-    
-    showErrorAlert(error.response.data.message)
+    const message =
+    error?.response?.data?.message || error.message || "Something went wrong";
+    showErrorAlert(message)
   }
   }
 
