@@ -13,6 +13,8 @@ const Uploads = () => {
   const MODEL_PATH = "my-folder"; // Path to your model files\
   const[nutrients,setNutrients]=useState({});
   const [quality,setQuality]=useState(1)
+  const [loading, setLoading] = useState(false);
+
   // Load the model when the component mounts
   useEffect(() => {
     // Function to load the model
@@ -84,6 +86,7 @@ const Uploads = () => {
     showErrorAlert('please upload a food Image')
     return;
     }
+    setLoading(true); 
     const {data}=await axios.post(`${BackendUrl}/api/food/nutrients`,{name:prediction.toLocaleLowerCase()})
     if(data){
     setNutrients(data.message)
@@ -95,6 +98,8 @@ const Uploads = () => {
     const message =
     error?.response?.data?.message || error.message || "Something went wrong";
     showErrorAlert(message)
+  }finally {
+    setLoading(false);
   }
   }
 
@@ -132,13 +137,15 @@ const Uploads = () => {
             />
           </div>
         </label>
-        <button
-          type="button"
-          className="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-3"
-          onClick={()=>getNutrients()}
-        >
-          Get Nutritions {"->"}
-        </button>
+       <button
+            type="button"
+            className="cursor-pointer text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-3 disabled:opacity-50"
+             onClick={getNutrients}
+            disabled={loading}
+            >
+    {loading ? "Loading..." : "Get Nutritions →"}
+</button>
+
       </div>
 
       {/* Nutrition Info Table */}
