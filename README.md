@@ -72,6 +72,7 @@ cd foodsnap-ai
 npx create-react-app client
 cd client
 npm install axios react-router-dom sweetalert2 lucide-react compressorjs
+npm install teachablemachine/image
 npm install tailwindcss @tailwindcss/vite
 ```
 ### 🔹Backend
@@ -83,9 +84,9 @@ npm install express mongoose cors dotenv
 npm install nodemon
 ```
 ## .env 
-
+// (I added the data in a JSON file, you can easily copy and paste the data to your MongoDB )->I Recommented Mongodb compass for easy use
 ```bash
-MONGO_URI=your-mongodb-connection-uri
+MONGO_URI=your-mongodb-connection-uri 
 ```
 ## 🎥 Demo Video
 
