@@ -64,21 +64,29 @@ The application also allows users to adjust food quantity and receive updated nu
 git clone https://github.com/yourusername/foodsnap-ai.git
 cd foodsnap-ai
 ```
-## Setup Frontend
-   npm install vite@latest client
-   cd client
-   npm install
-   npm run dev
+## 🧩 Installation Setup
 
-## Setup Backend 
-   cd server
-   npm install
-   npm start or npm run dev (Node mon)
-   
- ## 🔐 Backend Environment Variables
+### 🔹 Frontend
 
-   MONGO_URI=your-mongodb-connection-uri
+```bash
+npx create-react-app client
+cd client
+npm install axios react-router-dom sweetalert2 lucide-react compressorjs
+npm install tailwindcss @tailwindcss/vite
+```
+### 🔹Backend
+```bash
+mkdir server
+cd server
+npm init -y
+npm install express mongoose cors dotenv
+npm install nodemon
+```
+## .env 
 
+```bash
+MONGO_URI=your-mongodb-connection-uri
+```
 ## 🎥 Demo Video
 
 📹 [Watch the Demo Video on YouTube](https://youtu.be/ETo3jQP1cGs)
