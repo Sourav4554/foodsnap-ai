@@ -1,7 +1,7 @@
 # 🍛 FoodSnap AI
 
 🌐 Live Demo
-🔗 Live Project: https://foodsnap-ai.onrender.com
+🔗 Live Project: https://foodsnap-ai.onrender.com (take 5 to 10 s first prediction then less than 2s)
 
 **Personal Project**  
 Detect and analyze Kerala food items instantly through image recognition.
