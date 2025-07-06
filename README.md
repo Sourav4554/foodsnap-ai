@@ -84,7 +84,7 @@ npm install express mongoose cors dotenv
 npm install nodemon
 ```
 ## .env 
-// (I added the data in a JSON file, you can easily copy and paste the data to your MongoDB )->I Recommented Mongodb compass for easy use
+// (I added the data in a foodDetails file, you can easily copy and paste the data to your MongoDB )->I Recommented Mongodb compass for easy use
 ```bash
 MONGO_URI=your-mongodb-connection-uri 
 ```
