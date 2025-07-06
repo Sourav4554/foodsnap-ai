@@ -69,7 +69,7 @@ cd foodsnap-ai
 ### 🔹 Frontend
 
 ```bash
-npx create-react-app client
+npm create vite@latest client
 cd client
 npm install axios react-router-dom sweetalert2 lucide-react compressorjs
 npm install teachablemachine/image
